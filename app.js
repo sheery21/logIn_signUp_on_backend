@@ -61,7 +61,34 @@ console.log(obj ,'obj');
 
 app.post('/logIn' , async (req , res ) =>{
   try {                               
-    let body = req.body
+    const {email , password} = req.body
+    const user = await userModel.findOne({email})
+
+    console.log( user ,'user');
+    
+    
+    if(!user){
+      return res.json({
+        message : " email or password invalid",
+        status : false
+      })
+    }
+
+    const passCompare = await bcrypt.compare( password , user.password)
+
+     if(!passCompare){
+      return res.json({
+        message : " email or password invalid",
+        status : false
+      })
+    }
+
+    return res.json({
+      message : "user successfully login",
+      status : true,
+      data : user
+    })
+    
   } catch (error) {
     res.json({
       message : error.message || "something went wrong",
