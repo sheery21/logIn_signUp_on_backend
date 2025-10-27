@@ -23,9 +23,9 @@ app.post("/signUp", async (req, res) => {
   try {
     const body = req.body;
     const userPass = body.password;
-    
+
     const user = await userModel.findOne({ email: body.email });
-    
+
     if (user) {
       return res.json({
         message: "Email address already exists!",
@@ -33,15 +33,14 @@ app.post("/signUp", async (req, res) => {
         status: false,
       });
     }
-    
+
     const heahPassword = await bcrypt.hash(userPass, 10);
 
     const obj = {
       ...body,
-      password : heahPassword
-    }
-console.log(obj ,'obj');
-
+      password: heahPassword,
+    };
+    console.log(obj, "obj");
 
     const userRes = await userModel.create(obj);
     console.log(userRes, "userRes");
@@ -59,43 +58,43 @@ console.log(obj ,'obj');
   }
 });
 
-app.post('/logIn' , async (req , res ) =>{
-  try {                               
-    const {email , password} = req.body
-    const user = await userModel.findOne({email})
+app.post("/logIn", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await userModel.findOne({ email });
 
-    console.log( user ,'user');
-    
-    
-    if(!user){
+    console.log(user, "user");
+
+    if (!user) {
       return res.json({
-        message : " email or password invalid",
-        status : false
-      })
+        message: " email or password invalid",
+        status: false,
+      });
     }
 
-    const passCompare = await bcrypt.compare( password , user.password)
+    const passCompare = await bcrypt.compare(password, user.password);
 
-     if(!passCompare){
+    if (!passCompare) {
       return res.json({
-        message : " email or password invalid",
-        status : false
-      })
+        message: " email or password invalid",
+        status: false,
+      });
     }
 
     return res.json({
-      message : "user successfully login",
-      status : true,
-      data : user
-    })
+      message: "user successfully login",
+      status: true,
+      data: user,
+    });
+
     
   } catch (error) {
     res.json({
-      message : error.message || "something went wrong",
-      status : false
-    })
+      message: error.message || "something went wrong",
+      status: false,
+    });
   }
-})
+});
 
 app.listen(PORT, () =>
   console.log(`server runing on http://localhost:${PORT}`)
